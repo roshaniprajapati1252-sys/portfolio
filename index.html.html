@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OUTPUT — AI Product Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E2038;
+    --bg-deep:#091730;
+    --surface:#152C4C;
+    --surface-hi:#1C3660;
+    --text:#F3F0E6;
+    --muted:#93A8C9;
+    --gold:#E8A93D;
+    --cyan:#5FD9D3;
+    --grid:rgba(243,240,230,0.06);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk', sans-serif;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events:none;
+    z-index:0;
+  }
+  .glow{
+    position:fixed;
+    top:-200px; right:-200px;
+    width:600px; height:600px;
+    background:radial-gradient(circle, rgba(232,169,61,0.16), transparent 70%);
+    filter:blur(10px);
+    pointer-events:none;
+    z-index:0;
+    animation: drift 14s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    0%{transform:translate(0,0);}
+    100%{transform:translate(-60px, 80px);}
+  }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
+
+  nav{position:sticky; top:0; background:rgba(14,32,56,0.85); backdrop-filter:blur(8px); border-bottom:1px solid var(--grid); z-index:20;}
+  nav .wrap{display:flex; justify-content:space-between; align-items:center; padding:20px 32px;}
+  .wordmark{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:19px; display:flex; align-items:baseline; gap:10px;}
+  .wordmark .dot{color:var(--gold);}
+  .wordmark .tag{font-family:'IBM Plex Mono', monospace; font-weight:400; font-size:11px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;}
+  nav ul{display:flex; gap:32px; list-style:none; margin:0; padding:0;}
+  nav a{font-family:'IBM Plex Mono', monospace; font-size:13px; text-decoration:none; color:var(--muted); transition:color .15s;}
+  nav a:hover{color:var(--gold);}
+
+  section{padding:130px 0; position:relative;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--cyan); display:flex; align-items:center; gap:10px; margin-bottom:24px;
+  }
+  .eyebrow::before{content:""; width:26px; height:1px; background:var(--cyan); display:inline-block;}
+
+  /* HERO */
+  #hero{padding-top:90px; padding-bottom:60px;}
+  .hero-grid{display:grid; grid-template-columns: 1.2fr 1fr; gap:60px; align-items:center;}
+  .claim{font-size:clamp(36px,5vw,58px); font-weight:700; line-height:1.08; margin:0 0 26px;}
+  .claim .hl{color:var(--gold);}
+  .subclaim{font-size:17px; color:var(--muted); max-width:480px; margin-bottom:40px;}
+  .cta-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn{font-family:'IBM Plex Mono', monospace; font-size:13px; text-decoration:none; padding:15px 26px; display:inline-block; transition:all .18s ease; border:1px solid var(--gold);}
+  .btn.primary{background:var(--gold); color:var(--bg-deep); font-weight:600;}
+  .btn.primary:hover{background:var(--cyan); border-color:var(--cyan); transform:translateY(-2px);}
+  .btn.ghost{border-color:var(--muted); color:var(--text);}
+  .btn.ghost:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px);}
+
+  /* pipeline diagram */
+  .pipeline{display:flex; flex-direction:column; gap:0; align-items:stretch;}
+  .node{
+    background:var(--surface); border:1px solid var(--grid); padding:18px 22px;
+    font-family:'IBM Plex Mono', monospace; font-size:13px; letter-spacing:0.04em;
+    display:flex; align-items:center; justify-content:space-between;
+    transition:all .2s ease;
+  }
+  .node:hover{background:var(--surface-hi); border-color:var(--gold);}
+  .node .n-label{color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:0.1em;}
+  .node .n-value{color:var(--text); font-weight:600; margin-top:4px;}
+  .connector{height:32px; width:2px; background:linear-gradient(var(--gold), var(--cyan)); margin-left:22px; position:relative; overflow:hidden;}
+  .connector::after{
+    content:""; position:absolute; top:-100%; left:0; width:100%; height:100%;
+    background:linear-gradient(var(--cyan), transparent);
+    animation: flow 2.2s linear infinite;
+  }
+  @keyframes flow{ to{ top:200%; } }
+
+  /* WORK */
+  #work{background:var(--bg-deep);}
+  .section-title{font-size:clamp(26px,3.2vw,36px); font-weight:700; margin:0 0 14px;}
+  .section-intro{color:var(--muted); max-width:540px; margin-bottom:60px;}
+  .projects{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .card{
+    background:var(--surface); border:1px solid var(--grid); padding:30px 26px;
+    display:flex; flex-direction:column; gap:16px;
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    opacity:0; transform:translateY(24px);
+  }
+  .card.in-view{opacity:1; transform:translateY(0);}
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:var(--gold);
+    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+  }
+  .card .c-tag{font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--cyan); text-transform:uppercase; letter-spacing:0.1em;}
+  .card h3{font-size:22px; margin:0;}
+  .card p{color:var(--muted); font-size:14px; margin:0;}
+  .card .c-row{border-top:1px solid var(--grid); padding-top:14px; margin-top:auto; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted); display:flex; justify-content:space-between;}
+  .card .c-row span:last-child{color:var(--gold);}
+
+  /* ABOUT */
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:start;}
+  #about p{font-size:16px; color:var(--muted); max-width:460px;}
+  .badge{font-family:'IBM Plex Mono', monospace; font-size:12px; border-left:2px solid var(--gold); padding:10px 16px; background:var(--surface); display:inline-block; margin-top:8px;}
+  .fact-list{list-style:none; padding:0; margin:26px 0 0;}
+  .fact-list li{font-family:'IBM Plex Mono', monospace; font-size:13px; padding:12px 0; border-top:1px solid var(--grid); display:flex; justify-content:space-between; color:var(--muted);}
+  .fact-list li span:last-child{color:var(--text); text-align:right;}
+
+  /* CONTACT */
+  #contact{background:linear-gradient(180deg, var(--bg-deep), #061224);}
+  #contact .claim-small{font-size:clamp(28px,4.4vw,46px); font-weight:700; max-width:680px; margin:0 0 36px; line-height:1.15;}
+  #contact .contact-links{margin-top:44px; display:flex; gap:30px; flex-wrap:wrap; font-family:'IBM Plex Mono', monospace; font-size:13px;}
+  #contact .contact-links a{text-decoration:none; border-bottom:1px solid var(--muted); padding-bottom:3px; transition:all .15s;}
+  #contact .contact-links a:hover{color:var(--gold); border-color:var(--gold);}
+
+  footer{padding:32px 0; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted); background:#061224; border-top:1px solid var(--grid);}
+
+  @media (max-width:860px){
+    .hero-grid, .about-grid, .contact-panel{grid-template-columns:1fr;}
+    .projects{grid-template-columns:1fr;}
+    section{padding:90px 0;}
+    nav ul{
+      position:fixed; top:0; right:0; height:100vh; width:min(78vw, 300px);
+      background:var(--bg-deep); border-left:1px solid var(--grid);
+      flex-direction:column; justify-content:center; align-items:flex-start;
+      gap:28px; padding:0 40px;
+      transform:translateX(100%); transition:transform .28s ease; z-index:30;
+    }
+    nav ul.open{transform:translateX(0);}
+    nav a{font-size:16px;}
+    .menu-btn{display:flex;}
+  }
+
+  .menu-btn{
+    display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; z-index:31; padding:6px;
+  }
+  .menu-btn span{width:22px; height:2px; background:var(--text); display:block; transition:all .2s ease;}
+  .menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .menu-btn.open span:nth-child(2){opacity:0;}
+  .menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .scrim{display:none;}
+  @media (max-width:860px){
+    .scrim.open{display:block; position:fixed; inset:0; background:rgba(6,18,36,0.6); z-index:25;}
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--cyan); outline-offset:3px;
+  }
+
+  /* CONTACT FORM */
+  .contact-panel{display:grid; grid-template-columns:1.1fr 1fr; gap:60px; margin-top:56px; align-items:start;}
+  .contact-form{background:var(--surface); border:1px solid var(--grid); padding:34px; display:flex; flex-direction:column; gap:18px;}
+  .contact-form label{font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; display:block;}
+  .contact-form input, .contact-form textarea{
+    width:100%; background:var(--bg-deep); border:1px solid var(--grid); color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif; font-size:14px; padding:12px 14px; border-radius:2px;
+  }
+  .contact-form input:focus, .contact-form textarea:focus{border-color:var(--gold);}
+  .contact-form textarea{resize:vertical; min-height:110px;}
+  .contact-form .submit-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:13px; font-weight:600; background:var(--gold); color:var(--bg-deep);
+    border:1px solid var(--gold); padding:14px 22px; cursor:pointer; transition:all .18s ease; align-self:flex-start;
+  }
+  .contact-form .submit-btn:hover{background:var(--cyan); border-color:var(--cyan); transform:translateY(-2px);}
+  .form-note{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--muted); margin-top:2px;}
+  .form-status{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--cyan); min-height:16px;}
+
+  .copy-btn{
+    background:none; border:1px solid var(--muted); color:var(--muted); font-family:'IBM Plex Mono', monospace;
+    font-size:11px; padding:4px 10px; margin-left:10px; cursor:pointer; border-radius:2px; transition:all .15s;
+  }
+  .copy-btn:hover{border-color:var(--gold); color:var(--gold);}
+
+  #backToTop{
+    position:fixed; bottom:28px; right:28px; width:44px; height:44px; border-radius:50%;
+    background:var(--gold); color:var(--bg-deep); border:none; cursor:pointer; font-size:18px;
+    display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease; z-index:15;
+  }
+  #backToTop.show{opacity:1; pointer-events:auto;}
+  #backToTop:hover{transform:translateY(-3px);}
+
+  nav a.active{color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<nav>
+  <div class="wrap">
+    <div class="wordmark">OUTPUT<span class="dot">.</span> <span class="tag">AI Product Studio</span></div>
+    <ul id="navList">
+      <li><a href="#work" data-nav>work</a></li>
+      <li><a href="#about" data-nav>about</a></li>
+      <li><a href="#contact" data-nav>contact</a></li>
+    </ul>
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="navList">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="scrim" id="scrim"></div>
+
+<section id="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">the claim</div>
+      <h1 class="claim">Turning prompts into <span class="hl">shipped AI products.</span></h1>
+      <p class="subclaim">
+        Prompt engineering, generative content pipelines, and full-stack development —
+        combined into tools people actually use. Currently seeking an AI/tech internship.
+      </p>
+      <div class="cta-row">
+        <a href="#work" class="btn primary">See the work →</a>
+        <a href="#contact" class="btn ghost">Get in touch</a>
+      </div>
+    </div>
+    <div class="pipeline">
+      <div class="node"><div><div class="n-label">Input</div><div class="n-value">Prompt</div></div><span class="mono" style="color:var(--muted);">01</span></div>
+      <div class="connector"></div>
+      <div class="node"><div><div class="n-label">Process</div><div class="n-value">Pipeline</div></div><span class="mono" style="color:var(--muted);">02</span></div>
+      <div class="connector"></div>
+      <div class="node"><div><div class="n-label">Output</div><div class="n-value">Shipped product</div></div><span class="mono" style="color:var(--gold);">03</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="eyebrow">the proof</div>
+    <h2 class="section-title">Selected work</h2>
+    <p class="section-intro">Three tools built end to end — each one a real pipeline, not a prompt demo.</p>
+    <div class="projects">
+      <div class="card">
+        <span class="c-tag">Content generation</span>
+        <h3>Inkling</h3>
+        <p>A generative content pipeline that takes a prompt and produces publish-ready copy, tuned to voice and format.</p>
+        <div class="c-row"><span>React + prompt pipeline</span><span>Shipped</span></div>
+      </div>
+      <div class="card">
+        <span class="c-tag">Content generation</span>
+        <h3>Draftly</h3>
+        <p>A drafting tool built as a testbed for prompt architecture — the R&D counterpart to Inkling.</p>
+        <div class="c-row"><span>HTML / React</span><span>Shipped</span></div>
+      </div>
+      <div class="card">
+        <span class="c-tag">AI content generator</span>
+        <h3>AI Content Generator</h3>
+        <p>An end-to-end generative content system, from prompt design to working interface — the lead project on my resume.</p>
+        <div class="c-row"><span>Full pipeline</span><span>Shipped</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow">who's behind this</div>
+    <h2 class="section-title">About</h2>
+    <div class="about-grid">
+      <div>
+        <p>
+          I'm a BCA student focused on AI and full-stack development — not as separate
+          tracks, but as one skill: turning a prompt into a product someone can actually use.
+        </p>
+        <p>
+          Most of what's here started as a personal project with no deadline attached —
+          just a problem I wanted to solve, and a tool I wanted to exist.
+        </p>
+        <div class="badge">Builds end-to-end, not just prompts</div>
+      </div>
+      <ul class="fact-list">
+        <li><span>Focus</span><span>AI / generative content / full-stack</span></li>
+        <li><span>Background</span><span>BCA + AI workshop certifications</span></li>
+        <li><span>Shipped</span><span>Inkling, Draftly, AI Content Generator</span></li>
+        <li><span>Looking for</span><span>AI/tech internships</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="eyebrow" style="color:var(--gold);">the one action</div>
+    <h2 class="claim-small">If this is the kind of builder you're hiring for — let's talk.</h2>
+
+    <div class="contact-panel">
+      <form class="contact-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact">
+        <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+        <div>
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="name" required autocomplete="name">
+        </div>
+        <div>
+          <label for="cf-email">Your email</label>
+          <input type="email" id="cf-email" name="email" required autocomplete="email">
+        </div>
+        <div>
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" required placeholder="Role, company, or what you'd like to talk about"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send message →</button>
+        <div class="form-status" id="formStatus" role="status"></div>
+        <div class="form-note">Submits directly — you'll see messages in your Netlify dashboard once this is live.</div>
+      </form>
+
+      <div>
+        <div class="contact-links" style="margin-top:0; flex-direction:column; gap:20px;">
+          <div>
+            <a href="mailto:roshaniprajapati1252@gmail.com">roshaniprajapati1252@gmail.com</a>
+            <button class="copy-btn" data-copy="roshaniprajapati1252@gmail.com" type="button">Copy</button>
+          </div>
+          <div><a href="https://www.linkedin.com/in/roshaniprajapati/" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+          <div><a href="https://github.com/roshaniprajapati1252-sys" target="_blank" rel="noopener">GitHub ↗</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<button id="backToTop" aria-label="Back to top">↑</button>
+
+<footer>
+  <div class="wrap">© OUTPUT. — Roshani Prajapati, AI Product Builder</div>
+</footer>
+
+<script>
+  // Scroll-in project cards
+  const cards = document.querySelectorAll('.card');
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if(entry.isIntersecting){
+        setTimeout(()=> entry.target.classList.add('in-view'), i * 90);
+        cardObserver.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15});
+  cards.forEach(c => cardObserver.observe(c));
+
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const navList = document.getElementById('navList');
+  const scrim = document.getElementById('scrim');
+  function closeMenu(){
+    menuBtn.classList.remove('open');
+    navList.classList.remove('open');
+    scrim.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+  }
+  menuBtn.addEventListener('click', () => {
+    const isOpen = navList.classList.toggle('open');
+    menuBtn.classList.toggle('open', isOpen);
+    scrim.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+  scrim.addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-nav]').forEach(link => link.addEventListener('click', closeMenu));
+
+  // Active nav link on scroll
+  const sections = ['work','about','contact'].map(id => document.getElementById(id));
+  const navLinks = document.querySelectorAll('[data-nav]');
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = document.querySelector(`[data-nav][href="#${entry.target.id}"]`);
+      if(entry.isIntersecting && link){
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, {threshold:0.4});
+  sections.forEach(s => s && sectionObserver.observe(s));
+
+  // Contact form -> submits to Netlify Forms (falls back to mailto if not yet deployed on Netlify)
+  const contactForm = document.getElementById('contactForm');
+  const formStatus = document.getElementById('formStatus');
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+    if(!name || !email || !message){
+      formStatus.textContent = 'Please fill in every field.';
+      return;
+    }
+    const data = new FormData(contactForm);
+    fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(data).toString()
+    }).then(() => {
+      formStatus.textContent = 'Message sent — thank you!';
+      contactForm.reset();
+    }).catch(() => {
+      // Local preview or not-yet-deployed fallback
+      const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
+      const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`);
+      window.location.href = `mailto:roshaniprajapati1252@gmail.com?subject=${subject}&body=${body}`;
+      formStatus.textContent = 'Opening your email app…';
+    });
+  });
+
+  // Copy to clipboard
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const value = btn.getAttribute('data-copy');
+      try{
+        await navigator.clipboard.writeText(value);
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(()=> btn.textContent = original, 1500);
+      }catch(err){
+        btn.textContent = 'Press Ctrl+C';
+      }
+    });
+  });
+
+  // Back to top
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('show', window.scrollY > 600);
+  });
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
+
+</body>
+</html>
