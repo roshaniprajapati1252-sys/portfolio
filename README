@@ -1,0 +1,22 @@
+
+OUTPUT. — AI Product Studio Portfolio
+Roshani Prajapati's personal portfolio, built to showcase AI products built end-to-end — from prompt engineering to full-stack development.
+
+Live site: flourishing-wisp-afe90d.netlify.app 
+
+What's here
+A single-page portfolio with four sections:
+
+Hero—states the claim: turning prompts into shipped AI products end-to-end—from
+Work—case studies for Inkling, Draftly, and the AI Content Generator
+About—background and focus areas
+Contact—email, LinkedIn, GitHub, and a resume download link
+Stack
+Plain HTML, CSS, and vanilla JavaScript—no build step, no dependencies. Hosted on GitHub Pages.
+Structure
+index.html—the entire site (markup, styles, and scripts in one file)
+Local development
+Just open index.html in a browser. No build tools required.
+
+
+
